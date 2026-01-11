@@ -49,4 +49,12 @@ class Superstar extends Model
         return $this->belongsToMany(UserGoogle::class, 'subscribes', 'superstar_id', 'user_google_id')
                     ->withTimestamps();
     }
+
+    /**
+     * Get the payments for this superstar.
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'superstar_id');
+    }
 }

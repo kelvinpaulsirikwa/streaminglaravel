@@ -42,6 +42,17 @@
                 </a>
             </li>
             <li>
+                <a href="{{ route('admin.admins.index') }}" class="nav-link {{ request()->routeIs('admin.admins.*') ? 'active' : '' }}">
+                    <span class="nav-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 4.354a4 4 0 1 1 0 8.708M12 4.354a4 4 0 0 0-8.708 0M4.581 8.581a4 4 0 0 1 8.708 0M4.581 8.581a4 4 0 0 0-8.708 0"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </span>
+                    <span class="nav-text">Admin Users</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('admin.finance.index') }}" class="nav-link {{ request()->routeIs('admin.finance.*') ? 'active' : '' }}">
                     <span class="nav-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

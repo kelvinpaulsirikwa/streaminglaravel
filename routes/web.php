@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SuperstarController;
 use App\Http\Controllers\Admin\UserGoogleController;
 use App\Http\Controllers\Admin\FinanceController;
+use App\Http\Controllers\Admin\AdminController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -37,6 +38,15 @@ Route::prefix('admin')->group(function () {
         Route::get('/finance', [FinanceController::class, 'index'])->name('admin.finance.index');
         Route::get('/finance/{payment}', [FinanceController::class, 'show'])->name('admin.finance.show');
         Route::get('/finance/statistics', [FinanceController::class, 'statistics'])->name('admin.finance.statistics');
+
+        // Admin Management Routes
+        Route::get('/admins', [AdminController::class, 'index'])->name('admin.admins.index');
+        Route::get('/admins/create', [AdminController::class, 'create'])->name('admin.admins.create');
+        Route::post('/admins', [AdminController::class, 'store'])->name('admin.admins.store');
+        Route::get('/admins/{admin}', [AdminController::class, 'show'])->name('admin.admins.show');
+        Route::get('/admins/{admin}/edit', [AdminController::class, 'edit'])->name('admin.admins.edit');
+        Route::put('/admins/{admin}', [AdminController::class, 'update'])->name('admin.admins.update');
+        Route::delete('/admins/{admin}', [AdminController::class, 'destroy'])->name('admin.admins.destroy');
     });
 });
 

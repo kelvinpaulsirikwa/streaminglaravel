@@ -3,201 +3,363 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="page-header">
-    <h1 class="page-title">Dashboard</h1>
-</div>
-
-<!-- Welcome Message -->
-<div class="welcome-message">
-    <h2>Welcome back, {{ auth()->user()->name ?? 'Admin' }}!</h2>
-    <p>{{ config('site.owner.welcome_note') }}</p>
-</div>
-
-<!-- Statistics Cards -->
-<div class="dashboard-grid">
-    <div class="stat-card">
-        <div class="stat-card-header">
-            <span class="stat-card-title">Total Users</span>
-            <div class="stat-card-icon" style="background: rgba(102, 126, 234, 0.1); color: #667eea;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
+<div class="container-fluid py-4">
+    <!-- Welcome Message -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h2 class="card-title">Welcome back, {{ auth()->user()->name ?? 'Admin' }}! 👋</h2>
+                    <p class="card-text mb-0">Here's what's happening with your platform today.</p>
+                </div>
             </div>
         </div>
-        <div class="stat-card-value">0</div>
-        <div class="stat-card-change">+0% from last month</div>
     </div>
 
-    <div class="stat-card">
-        <div class="stat-card-header">
-            <span class="stat-card-title">Active Streams</span>
-            <div class="stat-card-icon" style="background: rgba(40, 167, 69, 0.1); color: #28a745;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="23 7 16 12 23 17 23 7"></polygon>
-                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-                </svg>
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <!-- Users Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Users
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalUsers }}</div>
+                            <div class="text-xs text-muted">
+                                <i class="fas fa-arrow-up text-success"></i> {{ $newUsersToday }} today
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="stat-card-value">0</div>
-        <div class="stat-card-change">+0% from last month</div>
+
+        <!-- Superstars Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Superstars
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalSuperstars }}</div>
+                            <div class="text-xs text-muted">
+                                <i class="fas fa-arrow-up text-success"></i> {{ $activeSuperstars }} active
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-star fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Total Revenue
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">${{ number_format($totalRevenue, 2) }}</div>
+                            <div class="text-xs text-muted">
+                                <i class="fas fa-arrow-up text-success"></i> ${{ number_format($todayRevenue, 2) }} today
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payments Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Total Payments
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalPayments }}</div>
+                            <div class="text-xs text-muted">
+                                <i class="fas fa-calendar text-info"></i> This month: {{ $thisMonthRevenue ? '$' . number_format($thisMonthRevenue, 2) : 'N/A' }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-credit-card fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="stat-card">
-        <div class="stat-card-header">
-            <span class="stat-card-title">Total Views</span>
-            <div class="stat-card-icon" style="background: rgba(255, 193, 7, 0.1); color: #ffc107;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
+    <!-- Additional Stats Row -->
+    <div class="row mb-4">
+        <!-- Content Stats -->
+        <div class="col-xl-4 col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Content Statistics</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Posts</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalPosts }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Messages</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalMessages }}</div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Conversations</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalConversations }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">New Posts Today</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $newPostsToday }}</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="stat-card-value">0</div>
-        <div class="stat-card-change">+0% from last month</div>
+
+        <!-- Revenue Breakdown -->
+        <div class="col-xl-4 col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Revenue Breakdown</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">System Revenue</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">${{ number_format($systemRevenue, 2) }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Superstar Revenue</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">${{ number_format($superstarRevenue, 2) }}</div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Subscriptions</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalSubscriptions }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Active Subs</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $activeSubscriptions }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Growth -->
+        <div class="col-xl-4 col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">User Growth</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Google Users</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalGoogleUsers }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">New This Month</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $newUsersThisMonth }}</div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">New Superstars</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $newSuperstarsThisMonth }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">New Messages Today</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $newMessagesToday }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="stat-card">
-        <div class="stat-card-header">
-            <span class="stat-card-title">Revenue</span>
-            <div class="stat-card-icon" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="12" y1="1" x2="12" y2="23"></line>
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                </svg>
+    <!-- Recent Activities -->
+    <div class="row">
+        <!-- Recent Payments -->
+        <div class="col-xl-6 col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Payments</h6>
+                    <a href="{{ route('admin.finance.index') }}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if($recentPayments->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Superstar</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($recentPayments as $payment)
+                                        <tr>
+                                            <td>{{ $payment->user->username ?? 'N/A' }}</td>
+                                            <td>{{ $payment->superstar->display_name ?? 'N/A' }}</td>
+                                            <td>${{ number_format($payment->total_amount, 2) }}</td>
+                                            <td>
+                                                <span class="badge badge-{{ $payment->payment_status == 'paid' ? 'success' : ($payment->payment_status == 'pending' ? 'warning' : 'danger') }}">
+                                                    {{ ucfirst($payment->payment_status) }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <p class="text-muted">No recent payments</p>
+                    @endif
+                </div>
             </div>
         </div>
-        <div class="stat-card-value">$0</div>
-        <div class="stat-card-change">+0% from last month</div>
+
+        <!-- Recent Users -->
+        <div class="col-xl-6 col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Users</h6>
+                    <a href="{{ route('admin.usergoogles.index') }}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if($recentUsers->count() > 0)
+                        <div class="list-group list-group-flush">
+                            @foreach($recentUsers as $user)
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0">{{ $user->username ?? $user->email }}</h6>
+                                        <small class="text-muted">{{ $user->email }}</small>
+                                    </div>
+                                    <small class="text-muted">{{ $user->created_at->format('M d, Y') }}</small>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-muted">No recent users</p>
+                    @endif
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Top Superstars -->
+    @if($topSuperstars->count() > 0)
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Top Superstars by Revenue</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach($topSuperstars as $index => $superstar)
+                            <div class="col-md-2 col-sm-4 col-6 mb-3 text-center">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ $superstar->display_name ?? $superstar->username }}</h5>
+                                        <p class="card-text">
+                                            <strong>${{ number_format($superstar->payments_sum_total_amount ?? 0, 2) }}</strong>
+                                        </p>
+                                        <span class="badge badge-primary">#{{ $index + 1 }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
+@endsection
 
-<!-- Content Section -->
-<div class="content-section">
-    <h2 class="section-title">Recent Activity</h2>
-    <p style="color: #666;">No recent activity to display.</p>
-</div>
-
+@push('styles')
 <style>
-    .page-header {
-        margin-bottom: 24px;
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
     }
-    
-    .page-title {
-        font-size: 28px;
-        font-weight: 600;
-        color: var(--text-primary);
+    .border-left-success {
+        border-left: 0.25rem solid #1cc88a !important;
     }
-    
-    .welcome-message {
-        background: linear-gradient(135deg, var(--primary-color) 0%, #764ba2 100%);
-        color: #ffffff;
-        padding: 30px;
-        border-radius: 12px;
-        margin-bottom: 30px;
+    .border-left-info {
+        border-left: 0.25rem solid #36b9cc !important;
     }
-    
-    .welcome-message h2 {
-        font-size: 24px;
-        margin-bottom: 10px;
+    .border-left-warning {
+        border-left: 0.25rem solid #f6c23e !important;
     }
-    
-    .welcome-message p {
-        opacity: 0.9;
-        line-height: 1.6;
+    .text-xs {
+        font-size: 0.7rem;
     }
-    
-    .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 20px;
-        margin-bottom: 30px;
+    .font-weight-bold {
+        font-weight: 700 !important;
     }
-    
-    .stat-card {
-        background: #ffffff;
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        border: 1px solid var(--border-color);
-        transition: all 0.2s;
+    .text-uppercase {
+        text-transform: uppercase !important;
     }
-    
-    .stat-card:hover {
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        transform: translateY(-2px);
+    .text-gray-300 {
+        color: #dddfeb !important;
     }
-    
-    .stat-card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
+    .text-gray-800 {
+        color: #5a5c69 !important;
     }
-    
-    .stat-card-title {
-        font-size: 14px;
-        color: var(--text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 500;
+    .fa-2x {
+        font-size: 2em;
     }
-    
-    .stat-card-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .no-gutters {
+        margin-right: 0;
+        margin-left: 0;
     }
-    
-    .stat-card-value {
-        font-size: 32px;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 5px;
+    .no-gutters > .col,
+    .no-gutters > [class*="col-"] {
+        padding-right: 0;
+        padding-left: 0;
     }
-    
-    .stat-card-change {
-        font-size: 12px;
-        color: #28a745;
-        font-weight: 500;
+    .mr-2 {
+        margin-right: 0.5rem !important;
     }
-    
-    .content-section {
-        background: #ffffff;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        border: 1px solid var(--border-color);
+    .py-2 {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
     }
-    
-    .section-title {
-        font-size: 20px;
-        color: var(--text-primary);
-        margin-bottom: 20px;
-        font-weight: 600;
+    .h-100 {
+        height: 100% !important;
     }
-    
-    @media (max-width: 768px) {
-        .dashboard-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .welcome-message {
-            padding: 20px;
-        }
-        
-        .welcome-message h2 {
-            font-size: 20px;
-        }
-        
-        .content-section {
-            padding: 20px;
-        }
+    .shadow {
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
     }
 </style>
-@endsection
+@endpush

@@ -634,7 +634,9 @@
                         console.log('Error attempting to enable fullscreen:', err);
                     });
                 } else {
-                    document.exitFullscreen();
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
                 }
             });
         }
