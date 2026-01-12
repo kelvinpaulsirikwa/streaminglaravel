@@ -45,6 +45,7 @@ return [
                  */
                 'annotations' => [
                     base_path('app/Http/Controllers'),
+                    base_path('app/OpenApi'),
                 ],
             ],
         ],
@@ -163,6 +164,16 @@ return [
              * By default the spec will be in version 3.0.0
              */
             'open_api_spec_version' => env('L5_SWAGGER_OPEN_API_SPEC_VERSION', \L5Swagger\Generator::OPEN_API_DEFAULT_SPEC_VERSION),
+            
+            /*
+             * Set to false to skip validation
+             */
+            'validate' => false,
+            
+            /*
+             * Allow empty documentation
+             */
+            'allowEmpty' => true,
         ],
 
         /*
@@ -231,13 +242,8 @@ return [
                     ]
                 */
             ],
-        'docs' => 'docs',
-
-        /*
-         * Route for Oauth2 authentication callback.
-         */
-        'oauth2_callback' => 'api/oauth2-callback',
-
+        ],
+        
         /*
          * Edit to trust the proxy's ip address - needed for AWS Load Balancer
          * string[]
@@ -308,5 +314,10 @@ return [
         'constants' => [
             'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', 'http://my-default-host.com'),
         ],
+        
+        /*
+         * Generate always documentation
+         */
+        'generate_always' => false,
     ],
-]];
+];
