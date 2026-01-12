@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test - Rashid Backend</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(5px);
+        }
+        .section-title {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            color: #e0e0e0;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 12px 15px;
+            border-radius: 8px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #28a745;
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+            outline: none;
+        }
+        .btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        .response-area {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .response-content {
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .endpoint-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .endpoint-tab {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #e0e0e0;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        .endpoint-tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        .endpoint-tab.active {
+            background: #28a745;
+            color: #fff;
+        }
+        .method-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+        .method-get { background: #28a745; }
+        .method-post { background: #17a2b8; }
+        .method-put { background: #ffc107; }
+        .method-delete { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="test-section">
+            <h1 class="section-title">
+                <i class="fas fa-flask"></i> API Testing Interface
+            </h1>
+            
+            <div class="endpoint-tabs">
+                <button class="endpoint-tab active" onclick="showEndpoint('login')">
+                    User Login
+                    <span class="method-badge method-post">POST</span>
+                </button>
+                <button class="endpoint-tab" onclick="showEndpoint('superstars')">
+                    Get Superstars
+                    <span class="method-badge method-get">GET</span>
+                </button>
+                <button class="endpoint-tab" onclick="showEndpoint('superstar-login')">
+                    Superstar Login
+                    <span class="method-badge method-post">POST</span>
+                </button>
+                <button class="endpoint-tab" onclick="showEndpoint('superstar-posts')">
+                    Superstar Posts
+                    <span class="method-badge method-get">GET</span>
+                </button>
+            </div>
+
+            <!-- User Login Form -->
+            <div id="login-form" class="endpoint-form">
+                <h3 style="color: #fff; margin-bottom: 20px;">User Login</h3>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="login-email" placeholder="user@example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="login-password" placeholder="•••••••••">
+                </div>
+                <button class="btn" onclick="testLogin()">
+                    <i class="fas fa-sign-in-alt"></i> Test Login
+                </button>
+            </div>
+
+            <!-- Get Superstars Form -->
+            <div id="superstars-form" class="endpoint-form" style="display: none;">
+                <h3 style="color: #fff; margin-bottom: 20px;">Get Superstars</h3>
+                <div class="form-group">
+                    <label class="form-label">Per Page</label>
+                    <input type="number" class="form-control" id="superstars-per-page" value="15" min="1" max="100">
+                </div>
+                <button class="btn" onclick="testGetSuperstars()">
+                    <i class="fas fa-users"></i> Get Superstars
+                </button>
+            </div>
+
+            <!-- Superstar Login Form -->
+            <div id="superstar-login-form" class="endpoint-form" style="display: none;">
+                <h3 style="color: #fff; margin-bottom: 20px;">Superstar Login</h3>
+                <div class="form-group">
+                    <label class="form-label">Login</label>
+                    <input type="text" class="form-control" id="superstar-login" placeholder="superstar@example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="superstar-password" placeholder="•••••••••">
+                </div>
+                <button class="btn" onclick="testSuperstarLogin()">
+                    <i class="fas fa-star"></i> Test Superstar Login
+                </button>
+            </div>
+
+            <!-- Superstar Posts Form -->
+            <div id="superstar-posts-form" class="endpoint-form" style="display: none;">
+                <h3 style="color: #fff; margin-bottom: 20px;">Get Superstar Posts</h3>
+                <div class="form-group">
+                    <label class="form-label">Superstar ID</label>
+                    <input type="number" class="form-control" id="posts-superstar-id" placeholder="1" min="1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Per Page</label>
+                    <input type="number" class="form-control" id="posts-per-page" value="15" min="1" max="100">
+                </div>
+                <button class="btn" onclick="testGetSuperstarPosts()">
+                    <i class="fas fa-images"></i> Get Posts
+                </button>
+            </div>
+        </div>
+
+        <div class="response-area">
+            <h3 style="color: #fff; margin-bottom: 15px;">
+                <i class="fas fa-terminal"></i> API Response
+            </h3>
+            <div class="response-content" id="response-content">
+                Click on any test button to see the API response here...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        function showEndpoint(endpoint) {
+            // Hide all forms
+            document.querySelectorAll('.endpoint-form').forEach(form => {
+                form.style.display = 'none';
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.endpoint-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected form and activate tab
+            document.getElementById(endpoint + '-form').style.display = 'block';
+            event.target.classList.add('active');
+        }
+
+        async function makeRequest(url, method = 'GET', data = null) {
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                'Accept': 'application/json'
+                }
+            };
+
+            if (data && method !== 'GET') {
+                options.body = JSON.stringify(data);
+            }
+
+            try {
+                const response = await fetch(API_BASE + url, options);
+                const result = await response.json();
+                
+                document.getElementById('response-content').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('response-content').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        function testLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            makeRequest('/user/google-login', 'POST', { email, password });
+        }
+
+        function testGetSuperstars() {
+            const perPage = document.getElementById('superstars-per-page').value;
+            makeRequest('/user/superstars?per_page=' + perPage);
+        }
+
+        function testSuperstarLogin() {
+            const login = document.getElementById('superstar-login').value;
+            const password = document.getElementById('superstar-password').value;
+            
+            makeRequest('/superstar/login', 'POST', { login, password });
+        }
+
+        function testGetSuperstarPosts() {
+            const superstarId = document.getElementById('posts-superstar-id').value;
+            const perPage = document.getElementById('posts-per-page').value;
+            
+            makeRequest(`/superstar/posts/${superstarId}?per_page=${perPage}`);
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

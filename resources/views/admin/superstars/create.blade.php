@@ -107,12 +107,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="price_per_hour">Price Per Hour <span class="required">*</span></label>
+                        <label for="price_per_hour">Price Per Hour</label>
                         <div class="input-with-icon">
                             <span class="currency-icon">$</span>
                             <input type="number" name="price_per_hour" id="price_per_hour" class="form-control" 
                                    value="{{ old('price_per_hour') }}" 
-                                   placeholder="0.00" step="0.01" min="0" required>
+                                   placeholder="0.00" step="0.01" min="0">
                         </div>
                         @error('price_per_hour')
                             <span class="error-message">{{ $message }}</span>

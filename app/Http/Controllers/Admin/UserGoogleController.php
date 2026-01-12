@@ -31,7 +31,7 @@ class UserGoogleController extends Controller
                 'superstars.user_id',
                 'superstars.display_name',
                 'superstars.bio',
-                'superstars.price_per_minute',
+                'superstars.price_per_hour',
                 'superstars.is_available',
                 'superstars.rating',
                 'superstars.total_followers',

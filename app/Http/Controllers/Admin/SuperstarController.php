@@ -56,7 +56,7 @@ class SuperstarController extends Controller
         $superstarValidated = $request->validate([
             'display_name' => 'required|string|max:100',
             'bio' => 'nullable|string',
-            'price_per_minute' => 'required|numeric|min:0|max:9999.99',
+            'price_per_hour' => 'nullable|numeric|min:0|max:9999.99',
             'rating' => 'nullable|numeric|min:0|max:5',
         ]);
 
@@ -103,7 +103,7 @@ class SuperstarController extends Controller
             'user_id' => 'required|exists:users,id|unique:superstars,user_id,' . $superstar->id,
             'display_name' => 'required|string|max:100',
             'bio' => 'nullable|string',
-            'price_per_minute' => 'required|numeric|min:0|max:9999.99',
+            'price_per_hour' => 'nullable|numeric|min:0|max:9999.99',
             'is_available' => 'boolean',
             'rating' => 'nullable|numeric|min:0|max:5',
             'total_followers' => 'nullable|integer|min:0',

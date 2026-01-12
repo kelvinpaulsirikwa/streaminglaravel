@@ -43,7 +43,7 @@
                     <th>ID</th>
                     <th>Display Name</th>
                     <th>Bio</th>
-                    <th>Price/Min</th>
+                    <th>Price/Hour</th>
                     <th>Rating</th>
                     <th>Followers</th>
                     <th>Available</th>
@@ -61,7 +61,7 @@
                                 {{ Str::limit($superstar->bio, 50) }}
                             </div>
                         </td>
-                        <td>${{ number_format($superstar->price_per_minute, 2) }}</td>
+                        <td>${{ number_format($superstar->price_per_hour, 2) }}</td>
                         <td>
                             <span class="badge badge-info">{{ $superstar->rating }}/5.00</span>
                         </td>
