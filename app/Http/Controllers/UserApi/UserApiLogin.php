@@ -28,14 +28,36 @@ class UserApiLogin extends Controller
      *         response=200,
      *         description="Login successful",
      *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Login successful"),
-     *             @OA\Property(property="user", type="object"),
-     *             @OA\Property(property="token", type="string")
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="user", type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="email", type="string", format="email", example="user@example.com"),
+     *                     @OA\Property(property="username", type="string", example="johndoe"),
+     *                     @OA\Property(property="image", type="string", nullable=true, example="https://example.com/avatar.jpg")
+     *                 ),
+     *                 @OA\Property(property="token", type="string", example="1|abc123token456"),
+     *                 @OA\Property(property="token_type", type="string", example="Bearer")
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Validation error"
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object", example={"email": {"The email field is required."}})
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="An error occurred during login"),
+     *             @OA\Property(property="error", type="string", example="Database connection failed")
+     *         )
      *     )
      * )
      */

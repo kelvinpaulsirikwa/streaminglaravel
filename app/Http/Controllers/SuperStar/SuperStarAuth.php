@@ -29,17 +29,46 @@ class SuperStarAuth extends Controller
      *         description="Login successful",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Login successful"),
-     *             @OA\Property(property="superstar", type="object"),
-     *             @OA\Property(property="token", type="string")
+     *             @OA\Property(property="superstar", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="user_id", type="integer", example=5),
+     *                 @OA\Property(property="display_name", type="string", example="John Doe"),
+     *                 @OA\Property(property="bio", type="string", example="Professional superstar"),
+     *                 @OA\Property(property="price_per_hour", type="number", format="float", example=50.00),
+     *                 @OA\Property(property="is_available", type="boolean", example=true),
+     *                 @OA\Property(property="rating", type="number", format="float", example=4.5),
+     *                 @OA\Property(property="total_followers", type="integer", example=1500),
+     *                 @OA\Property(property="status", type="string", example="active"),
+     *                 @OA\Property(property="username", type="string", example="johndoe"),
+     *                 @OA\Property(property="email", type="string", format="email", example="superstar@example.com"),
+     *                 @OA\Property(property="role", type="string", example="superstar"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-15T10:30:00Z")
+     *             ),
+     *             @OA\Property(property="token", type="string", example="1|abc123token456"),
+     *             @OA\Property(property="token_type", type="string", example="Bearer")
      *         )
      *     ),
      *     @OA\Response(
      *         response=401,
-     *         description="Invalid credentials"
+     *         description="Invalid credentials",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Invalid credentials")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Admin access forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Please use admin app for admin access")
+     *         )
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Validation error"
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Validation failed"),
+     *             @OA\Property(property="errors", type="object", example={"login": {"The login field is required."}})
+     *         )
      *     )
      * )
      */
@@ -118,7 +147,7 @@ class SuperStarAuth extends Controller
      * @OA\Post(
      *     path="/api/superstar/logout",
      *     summary="Logout superstar",
-     *     description="Logout the authenticated superstar and revoke token",
+     *     description="Logout of authenticated superstar and revoke token",
      *     tags={"Superstar Authentication"},
      *     security={{"sanctum":{}}},
      *     @OA\Response(
@@ -130,7 +159,10 @@ class SuperStarAuth extends Controller
      *     ),
      *     @OA\Response(
      *         response=401,
-     *         description="Unauthorized"
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized")
+     *         )
      *     )
      * )
      */
@@ -147,19 +179,37 @@ class SuperStarAuth extends Controller
      * @OA\Get(
      *     path="/api/superstar/me",
      *     summary="Get authenticated superstar",
-     *     description="Get the authenticated superstar's profile information",
+     *     description="Get authenticated superstar's profile information",
      *     tags={"Superstar Authentication"},
      *     security={{"sanctum":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Profile retrieved successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="superstar", type="object")
+     *             @OA\Property(property="superstar", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="user_id", type="integer", example=5),
+     *                 @OA\Property(property="display_name", type="string", example="John Doe"),
+     *                 @OA\Property(property="bio", type="string", example="Professional superstar"),
+     *                 @OA\Property(property="price_per_hour", type="number", format="float", example=50.00),
+     *                 @OA\Property(property="is_available", type="boolean", example=true),
+     *                 @OA\Property(property="rating", type="number", format="float", example=4.5),
+     *                 @OA\Property(property="total_followers", type="integer", example=1500),
+     *                 @OA\Property(property="status", type="string", example="active"),
+     *                 @OA\Property(property="username", type="string", example="johndoe"),
+     *                 @OA\Property(property="email", type="string", format="email", example="superstar@example.com"),
+     *                 @OA\Property(property="role", type="string", example="superstar"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-15T10:30:00Z"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2024-01-20T15:45:00Z")
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=401,
-     *         description="Unauthorized"
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized")
+     *         )
      *     )
      * )
      */
@@ -288,15 +338,16 @@ class SuperStarAuth extends Controller
      * @OA\Post(
      *     path="/api/superstar/change-password",
      *     summary="Change superstar password",
-     *     description="Change the authenticated superstar's password",
+     *     description="Change authenticated superstar's password",
      *     tags={"Superstar Authentication"},
      *     security={{"sanctum":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"current_password","password"},
-     *             @OA\Property(property="current_password", type="string", format="password"),
-     *             @OA\Property(property="password", type="string", format="password", minLength=8)
+     *             required={"current_password","new_password"},
+     *             @OA\Property(property="current_password", type="string", format="password", example="oldpassword123"),
+     *             @OA\Property(property="new_password", type="string", format="password", minLength=8, example="newpassword123"),
+     *             @OA\Property(property="new_password_confirmation", type="string", format="password", example="newpassword123")
      *         )
      *     ),
      *     @OA\Response(
@@ -307,8 +358,19 @@ class SuperStarAuth extends Controller
      *         )
      *     ),
      *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized")
+     *         )
+     *     ),
+     *     @OA\Response(
      *         response=422,
-     *         description="Validation error"
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Validation failed"),
+     *             @OA\Property(property="errors", type="object", example={"current_password": {"The current password field is required."}})
+     *         )
      *     )
      * )
      */

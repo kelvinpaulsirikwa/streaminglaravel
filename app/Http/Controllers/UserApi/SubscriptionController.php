@@ -29,13 +29,34 @@ class SubscriptionController extends Controller
      *         description="Subscriptions retrieved successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="data", type="array", @OA\Items(type="object")),
-     *             @OA\Property(property="pagination", type="object")
+     *             @OA\Property(property="data", type="array", @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="user_id", type="integer", example=5),
+     *                 @OA\Property(property="display_name", type="string", example="John Doe"),
+     *                 @OA\Property(property="bio", type="string", example="Professional streamer"),
+     *                 @OA\Property(property="price_per_minute", type="number", format="float", example=0.50),
+     *                 @OA\Property(property="is_available", type="boolean", example=true),
+     *                 @OA\Property(property="rating", type="number", format="float", example=4.5),
+     *                 @OA\Property(property="total_followers", type="integer", example=1500),
+     *                 @OA\Property(property="status", type="string", example="active"),
+     *                 @OA\Property(property="subscribed_at", type="string", format="date-time", example="2024-01-15T10:30:00Z")
+     *             )),
+     *             @OA\Property(property="pagination", type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=5),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="total", type="integer", example=75)
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=401,
-     *         description="Unauthorized"
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Unauthorized")
+     *         )
      *     )
      * )
      */
@@ -99,11 +120,27 @@ class SubscriptionController extends Controller
      *     ),
      *     @OA\Response(
      *         response=401,
-     *         description="Unauthorized"
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Unauthorized")
+     *         )
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Validation error"
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object", example={"superstar_id": {"The superstar id field is required."}})
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Superstar not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Superstar not found")
+     *         )
      *     )
      * )
      */
