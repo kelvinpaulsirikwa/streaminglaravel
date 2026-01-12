@@ -7,7 +7,10 @@
     <meta name="keywords" content="streaming, live streaming, content creators, video platform, monetization">
     
     <title>{{ config('site.name') }} - {{ config('site.tagline') }}</title>
-
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/static_files/logo.png') }}">
+    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800,900" rel="stylesheet" />
@@ -45,7 +48,6 @@
                     <a href="#superstars" class="nav-link-custom">Superstars</a>
                     <a href="#stats" class="nav-link-custom">Stats</a>
                     <a href="#cta" class="nav-link-custom">Get Started</a>
-                    <a href="{{ route('admin.login') }}" class="nav-link-custom">Login</a>
                 </div>
                 <div>
                     @if (Route::has('admin.login'))

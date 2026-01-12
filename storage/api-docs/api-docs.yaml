@@ -1,34 +1,13 @@
 openapi: 3.0.0
 info:
   title: Rashid Backend API Documentation
-  description: Complete API Documentation for Rashid Backend Application
   version: 1.0.0
+  description: Complete API Documentation for Rashid Backend Application
   contact:
-    email: admin@rashid.com
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    name: Rashid Backend Team
 servers:
   - url: http://127.0.0.1:8000
     description: Rashid Backend API Server
-
-tags:
-  - name: User Authentication
-    description: User authentication endpoints
-  - name: User Subscriptions
-    description: User subscription management
-  - name: User Chat
-    description: User chat functionality
-  - name: User Payments
-    description: User payment processing
-  - name: User Payment History
-    description: User payment history and details
-  - name: Superstar Authentication
-    description: Superstar authentication endpoints
-  - name: Superstar Profile
-    description: Superstar profile management
-  - name: Superstar Payments
-    description: Superstar payment management
 
 paths:
   # User Authentication
@@ -67,15 +46,61 @@ paths:
               schema:
                 type: object
                 properties:
+                  success:
+                    type: boolean
+                    example: true
                   message:
                     type: string
                     example: Login successful
-                  user:
+                  data:
                     type: object
-                  token:
-                    type: string
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          email:
+                            type: string
+                            format: email
+                            example: user@example.com
+                          username:
+                            type: string
+                            example: johndoe
+                          image:
+                            type: string
+                            nullable: true
+                            example: https://example.com/avatar.jpg
+                          created_at:
+                            type: string
+                            format: date-time
+                            example: 2024-01-15T10:30:00Z
+                          updated_at:
+                            type: string
+                            format: date-time
+                            example: 2024-01-20T15:45:00Z
+                      token:
+                        type: string
+                        example: 1|abc123token456
+                      token_type:
+                        type: string
+                        example: Bearer
         '422':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: The given data was invalid.
+                  errors:
+                    type: object
+                    example:
+                      email:
+                        - The email field is required.
 
   # User Subscriptions
   /api/user/subscriptions:
@@ -109,11 +134,65 @@ paths:
                     type: array
                     items:
                       type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        user_id:
+                          type: integer
+                          example: 5
+                        display_name:
+                          type: string
+                          example: John Doe
+                        bio:
+                          type: string
+                          example: Professional streamer
+                        price_per_minute:
+                          type: number
+                          format: float
+                          example: 0.50
+                        is_available:
+                          type: boolean
+                          example: true
+                        rating:
+                          type: number
+                          format: float
+                          example: 4.5
+                        total_followers:
+                          type: integer
+                          example: 1500
+                        status:
+                          type: string
+                          example: active
+                        subscribed_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:30:00Z
                   pagination:
                     type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 5
+                      per_page:
+                        type: integer
+                        example: 15
+                      total:
+                        type: integer
+                        example: 75
         '401':
           description: Unauthorized
-
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
     post:
       tags:
         - User Subscriptions
@@ -149,62 +228,6 @@ paths:
                     example: Subscribed successfully
         '401':
           description: Unauthorized
-        '422':
-          description: Validation error
-
-  /api/user/subscriptions/{superstarId}:
-    delete:
-      tags:
-        - User Subscriptions
-      summary: Unsubscribe from superstar
-      description: Unsubscribe from a superstar and decreases total_followers count
-      security:
-        - sanctum: []
-      parameters:
-        - name: superstarId
-          in: path
-          description: Superstar ID to unsubscribe from
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Unsubscription successful
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: Unsubscribed successfully
-        '401':
-          description: Unauthorized
-        '404':
-          description: Subscription not found
-
-  # User Chat
-  /api/user/chat/start/{superstarId}:
-    post:
-      tags:
-        - User Chat
-      summary: Start chat with superstar
-      description: Find or create conversation with a superstar
-      security:
-        - sanctum: []
-      parameters:
-        - name: superstarId
-          in: path
-          description: Superstar ID to start chat with
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Chat started successfully
           content:
             application/json:
               schema:
@@ -212,96 +235,9 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Chat started successfully
-                  conversation:
-                    type: object
-        '401':
-          description: Unauthorized
+                    example: Unauthorized
         '404':
           description: Superstar not found
-
-  /api/user/chat/conversations:
-    get:
-      tags:
-        - User Chat
-      summary: Get user conversations
-      description: Get all conversations for the authenticated user
-      security:
-        - sanctum: []
-      responses:
-        '200':
-          description: Conversations retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  conversations:
-                    type: array
-                    items:
-                      type: object
-        '401':
-          description: Unauthorized
-
-  /api/user/chat/unread-count:
-    get:
-      tags:
-        - User Chat
-      summary: Get unread message count
-      description: Get count of unread messages for the authenticated user
-      security:
-        - sanctum: []
-      responses:
-        '200':
-          description: Unread count retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  unread_count:
-                    type: integer
-                    example: 5
-        '401':
-          description: Unauthorized
-
-  # User Payments
-  /api/user/payments/process:
-    post:
-      tags:
-        - User Payments
-      summary: Process payment
-      description: Process payment for chat session and create payment records
-      security:
-        - sanctum: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - conversation_id
-                - payment_method
-                - amount
-              properties:
-                conversation_id:
-                  type: integer
-                  example: 1
-                payment_method:
-                  type: string
-                  enum:
-                    - wallet
-                    - card
-                    - mobile_money
-                  example: card
-                amount:
-                  type: number
-                  format: float
-                  example: 50.00
-      responses:
-        '200':
-          description: Payment processed successfully
           content:
             application/json:
               schema:
@@ -309,162 +245,22 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Payment processed successfully
-                  payment:
-                    type: object
+                    example: Superstar not found
         '422':
           description: Validation error
-
-  /api/user/payments/history:
-    get:
-      tags:
-        - User Payments
-      summary: Get payment history
-      description: Get user's payment history with pagination
-      security:
-        - sanctum: []
-      parameters:
-        - name: page
-          in: query
-          description: Page number
-          required: false
-          schema:
-            type: integer
-            default: 1
-        - name: per_page
-          in: query
-          description: Items per page
-          required: false
-          schema:
-            type: integer
-            default: 15
-      responses:
-        '200':
-          description: Payment history retrieved successfully
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  payments:
-                    type: array
-                    items:
-                      type: object
-                  pagination:
+                  message:
+                    type: string
+                    example: Validation failed
+                  errors:
                     type: object
-
-  # User Payment History
-  /api/user/payment-history/user:
-    get:
-      tags:
-        - User Payment History
-      summary: Get all user payments
-      description: Fetch all user payments with pagination
-      security:
-        - sanctum: []
-      parameters:
-        - name: page
-          in: query
-          description: Page number
-          required: false
-          schema:
-            type: integer
-            default: 1
-        - name: per_page
-          in: query
-          description: Items per page
-          required: false
-          schema:
-            type: integer
-            default: 15
-      responses:
-        '200':
-          description: Payments retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  payments:
-                    type: array
-                    items:
-                      type: object
-                  pagination:
-                    type: object
-
-  /api/user/payment-history/superstar/{superstarId}:
-    get:
-      tags:
-        - User Payment History
-      summary: Get payments by superstar
-      description: Fetch payments filtered by specific superstar with pagination
-      security:
-        - sanctum: []
-      parameters:
-        - name: superstarId
-          in: path
-          description: Superstar ID
-          required: true
-          schema:
-            type: integer
-        - name: page
-          in: query
-          description: Page number
-          required: false
-          schema:
-            type: integer
-            default: 1
-        - name: per_page
-          in: query
-          description: Items per page
-          required: false
-          schema:
-            type: integer
-            default: 15
-      responses:
-        '200':
-          description: Payments retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  superstar:
-                    type: object
-                  payments:
-                    type: array
-                    items:
-                      type: object
-                  pagination:
-                    type: object
-
-  /api/user/payment-history/transaction/{transactionReference}:
-    get:
-      tags:
-        - User Payment History
-      summary: Get transaction details
-      description: View complete transaction details by reference
-      security:
-        - sanctum: []
-      parameters:
-        - name: transactionReference
-          in: path
-          description: Transaction reference
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Transaction details retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  transaction:
-                    type: object
-        '404':
-          description: Transaction not found
+                    example:
+                      superstar_id:
+                        - The superstar id field is required.
 
   # Superstar Authentication
   /api/superstar/login:
@@ -504,19 +300,98 @@ paths:
                     example: Login successful
                   superstar:
                     type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      user_id:
+                        type: integer
+                        example: 5
+                      display_name:
+                        type: string
+                        example: John Doe
+                      bio:
+                        type: string
+                        example: Professional superstar
+                      price_per_hour:
+                        type: number
+                        format: float
+                        example: 50.00
+                      is_available:
+                        type: boolean
+                        example: true
+                      rating:
+                        type: number
+                        format: float
+                        example: 4.5
+                      total_followers:
+                        type: integer
+                        example: 1500
+                      status:
+                        type: string
+                        example: active
+                      username:
+                        type: string
+                        example: johndoe
+                      email:
+                        type: string
+                        format: email
+                        example: superstar@example.com
+                      role:
+                        type: string
+                        example: superstar
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-15T10:30:00Z
                   token:
                     type: string
+                    example: 1|abc123token456
+                  token_type:
+                    type: string
+                    example: Bearer
         '401':
           description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid credentials
+        '403':
+          description: Admin access forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Please use admin app for admin access
         '422':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+                  errors:
+                    type: object
+                    example:
+                      login:
+                        - The login field is required.
 
   /api/superstar/logout:
     post:
       tags:
         - Superstar Authentication
       summary: Logout superstar
-      description: Logout the authenticated superstar and revoke token
+      description: Logout authenticated superstar and revoke token
       security:
         - sanctum: []
       responses:
@@ -532,13 +407,21 @@ paths:
                     example: Logged out successfully
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
 
   /api/superstar/me:
     get:
       tags:
         - Superstar Authentication
       summary: Get authenticated superstar
-      description: Get the authenticated superstar's profile information
+      description: Get authenticated superstar's profile information
       security:
         - sanctum: []
       responses:
@@ -551,16 +434,71 @@ paths:
                 properties:
                   superstar:
                     type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      user_id:
+                        type: integer
+                        example: 5
+                      display_name:
+                        type: string
+                        example: John Doe
+                      bio:
+                        type: string
+                        example: Professional superstar
+                      price_per_hour:
+                        type: number
+                        format: float
+                        example: 50.00
+                      is_available:
+                        type: boolean
+                        example: true
+                      rating:
+                        type: number
+                        format: float
+                        example: 4.5
+                      total_followers:
+                        type: integer
+                        example: 1500
+                      status:
+                        type: string
+                        example: active
+                      username:
+                        type: string
+                        example: johndoe
+                      email:
+                        type: string
+                        format: email
+                        example: superstar@example.com
+                      role:
+                        type: string
+                        example: superstar
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-15T10:30:00Z
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-20T15:45:00Z
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
 
-  # Superstar Profile
   /api/superstar/profile:
     put:
       tags:
         - Superstar Profile
       summary: Update superstar profile
-      description: Update the authenticated superstar's profile information
+      description: Update authenticated superstar's profile information
       security:
         - sanctum: []
       requestBody:
@@ -603,15 +541,86 @@ paths:
                     example: Profile updated successfully
                   superstar:
                     type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      user_id:
+                        type: integer
+                        example: 5
+                      display_name:
+                        type: string
+                        example: John Doe
+                      bio:
+                        type: string
+                        example: Professional superstar
+                      price_per_hour:
+                        type: number
+                        format: float
+                        example: 50.00
+                      is_available:
+                        type: boolean
+                        example: true
+                      rating:
+                        type: number
+                        format: float
+                        example: 4.5
+                      total_followers:
+                        type: integer
+                        example: 1500
+                      status:
+                        type: string
+                        example: active
+                      username:
+                        type: string
+                        example: johndoe
+                      email:
+                        type: string
+                        format: email
+                        example: superstar@example.com
+                      role:
+                        type: string
+                        example: superstar
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-15T10:30:00Z
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-20T15:45:00Z
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
         '422':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+                  errors:
+                    type: object
+                    example:
+                      username:
+                        - The username has already been taken.
 
   /api/superstar/change-password:
     post:
       tags:
         - Superstar Authentication
       summary: Change superstar password
-      description: Change the authenticated superstar's password
+      description: Change authenticated superstar's password
       security:
         - sanctum: []
       requestBody:
@@ -622,15 +631,21 @@ paths:
               type: object
               required:
                 - current_password
-                - password
+                - new_password
               properties:
                 current_password:
                   type: string
                   format: password
-                password:
+                  example: oldpassword123
+                new_password:
                   type: string
                   format: password
                   minLength: 8
+                  example: newpassword123
+                new_password_confirmation:
+                  type: string
+                  format: password
+                  example: newpassword123
       responses:
         '200':
           description: Password changed successfully
@@ -642,8 +657,31 @@ paths:
                   message:
                     type: string
                     example: Password changed successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
         '422':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+                  errors:
+                    type: object
+                    example:
+                      current_password:
+                        - The current password field is required.
 
   # Superstar Payments
   /api/superstar/payments/history:
@@ -681,101 +719,63 @@ paths:
                     type: array
                     items:
                       type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        user_id:
+                          type: integer
+                          example: 5
+                        superstar_id:
+                          type: integer
+                          example: 2
+                        amount:
+                          type: number
+                          format: float
+                          example: 25.50
+                        payment_method:
+                          type: string
+                          example: credit_card
+                        status:
+                          type: string
+                          example: completed
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:30:00Z
+                        updated_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:35:00Z
                   pagination:
                     type: object
-
-  /api/superstar/payments/system-revenue:
-    get:
-      tags:
-        - Superstar Payments
-      summary: Get system revenue
-      description: Show system revenue (20% of all payments) with breakdown
-      security:
-        - sanctum: []
-      parameters:
-        - name: page
-          in: query
-          description: Page number
-          required: false
-          schema:
-            type: integer
-            default: 1
-        - name: per_page
-          in: query
-          description: Items per page
-          required: false
-          schema:
-            type: integer
-            default: 15
-      responses:
-        '200':
-          description: System revenue retrieved successfully
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 3
+                      per_page:
+                        type: integer
+                        example: 15
+                      total:
+                        type: integer
+                        example: 42
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  revenue_summary:
-                    type: object
-                  breakdowns:
-                    type: array
-                    items:
-                      type: object
-                  pagination:
-                    type: object
-
-  /api/superstar/payments/user/{userId}:
-    get:
-      tags:
-        - Superstar Payments
-      summary: Get user payment history
-      description: View payment history for specific user with pagination
-      security:
-        - sanctum: []
-      parameters:
-        - name: userId
-          in: path
-          description: User ID
-          required: true
-          schema:
-            type: integer
-        - name: page
-          in: query
-          description: Page number
-          required: false
-          schema:
-            type: integer
-            default: 1
-        - name: per_page
-          in: query
-          description: Items per page
-          required: false
-          schema:
-            type: integer
-            default: 15
-      responses:
-        '200':
-          description: User payment history retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  user:
-                    type: object
-                  payments:
-                    type: array
-                    items:
-                      type: object
-                  pagination:
-                    type: object
-        '404':
-          description: User not found
+                  message:
+                    type: string
+                    example: Unauthorized
 
 components:
   securitySchemes:
     sanctum:
-      type: apiKey
-      in: header
-      name: Authorization
-      description: Enter token in format (Bearer <token>)
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

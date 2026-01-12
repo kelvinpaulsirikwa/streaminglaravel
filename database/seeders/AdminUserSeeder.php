@@ -29,6 +29,20 @@ class AdminUserSeeder extends Seeder
                 'profile_image' => null,
             ]
         );
+
+        User::firstOrCreate(
+            ['email' => 'nkindwarashid@gmail.com'],
+            [
+                'name' => 'Admin User',
+                'username' => 'nkindwarashid',
+                'email' => 'nkindwarashid@gmail.com',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'is_verified' => true,
+                'is_blocked' => false,
+                'profile_image' => null,
+            ]
+        );
     }
 }
 
