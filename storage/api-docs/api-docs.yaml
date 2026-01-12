@@ -773,6 +773,1802 @@ paths:
                     type: string
                     example: Unauthorized
 
+# Superstar Posts
+  /api/superstar/posts:
+    get:
+      tags:
+        - Superstar Posts
+      summary: Get superstar posts
+      description: Get authenticated superstar's posts with pagination and filtering options
+      security:
+        - sanctum: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 15
+        - name: media_type
+          in: query
+          description: Filter by media type
+          required: false
+          schema:
+            type: string
+            enum: ["image", "video"]
+        - name: is_pg
+          in: query
+          description: Filter by PG rating
+          required: false
+          schema:
+            type: boolean
+        - name: is_disturbing
+          in: query
+          description: Filter by disturbing content
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Posts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        user_id:
+                          type: integer
+                          example: 5
+                        media_type:
+                          type: string
+                          example: image
+                        resource_type:
+                          type: string
+                          example: upload
+                        resource_url_path:
+                          type: string
+                          example: posts/image123.jpg
+                        description:
+                          type: string
+                          nullable: true
+                          example: Check out my new post!
+                        is_pg:
+                          type: boolean
+                          example: true
+                        is_disturbing:
+                          type: boolean
+                          example: false
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:30:00Z
+                        updated_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:35:00Z
+                        superstar:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 5
+                            display_name:
+                              type: string
+                              example: John Doe
+                            username:
+                              type: string
+                              example: johndoe
+                            email:
+                              type: string
+                              format: email
+                              example: superstar@example.com
+                  pagination:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 5
+                      per_page:
+                        type: integer
+                        example: 15
+                      total:
+                        type: integer
+                        example: 75
+                      from:
+                        type: integer
+                        example: 1
+                      to:
+                        type: integer
+                        example: 15
+                      has_more_pages:
+                        type: boolean
+                        example: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+
+    post:
+      tags:
+        - Superstar Posts
+      summary: Create superstar post
+      description: Create a new post for authenticated superstar
+      security:
+        - sanctum: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - media_type
+                - resource_type
+                - resource_url_path
+              properties:
+                media_type:
+                  type: string
+                  enum: ["image", "video"]
+                  example: image
+                resource_type:
+                  type: string
+                  enum: ["upload", "url"]
+                  example: upload
+                resource_url_path:
+                  type: string
+                  maxLength: 500
+                  example: posts/image123.jpg
+                description:
+                  type: string
+                  nullable: true
+                  example: Check out my new post!
+                is_pg:
+                  type: boolean
+                  example: true
+                is_disturbing:
+                  type: boolean
+                  example: false
+      responses:
+        '201':
+          description: Post created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Post created successfully
+                  post:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      user_id:
+                        type: integer
+                        example: 5
+                      media_type:
+                        type: string
+                        example: image
+                      resource_type:
+                        type: string
+                        example: upload
+                      resource_url_path:
+                        type: string
+                        example: posts/image123.jpg
+                      description:
+                        type: string
+                        nullable: true
+                        example: Check out my new post!
+                      is_pg:
+                        type: boolean
+                        example: true
+                      is_disturbing:
+                        type: boolean
+                        example: false
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-15T10:30:00Z
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-15T10:35:00Z
+                      superstar:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 5
+                          display_name:
+                            type: string
+                            example: John Doe
+                          username:
+                            type: string
+                            example: johndoe
+                          email:
+                            type: string
+                            format: email
+                            example: superstar@example.com
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+                  errors:
+                    type: object
+                    example:
+                      media_type:
+                        - The media type field is required.
+
+  /api/superstar/posts/{id}:
+    get:
+      tags:
+        - Superstar Posts
+      summary: Get specific superstar post
+      description: Get a specific post by ID for the authenticated superstar
+      security:
+        - sanctum: []
+      parameters:
+        - name: id
+          in: path
+          description: Post ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Post retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  post:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      user_id:
+                        type: integer
+                        example: 5
+                      media_type:
+                        type: string
+                        example: image
+                      resource_type:
+                        type: string
+                        example: upload
+                      resource_url_path:
+                        type: string
+                        example: posts/image123.jpg
+                      description:
+                        type: string
+                        nullable: true
+                        example: Check out my new post!
+                      is_pg:
+                        type: boolean
+                        example: true
+                      is_disturbing:
+                        type: boolean
+                        example: false
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-15T10:30:00Z
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-15T10:35:00Z
+                      superstar:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 5
+                          display_name:
+                            type: string
+                            example: John Doe
+                          username:
+                            type: string
+                            example: johndoe
+                          email:
+                            type: string
+                            format: email
+                            example: superstar@example.com
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Post not found
+
+    put:
+      tags:
+        - Superstar Posts
+      summary: Update superstar post
+      description: Update an existing post for the authenticated superstar
+      security:
+        - sanctum: []
+      parameters:
+        - name: id
+          in: path
+          description: Post ID
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                media_type:
+                  type: string
+                  enum: ["image", "video"]
+                  example: video
+                resource_type:
+                  type: string
+                  enum: ["upload", "url"]
+                  example: url
+                resource_url_path:
+                  type: string
+                  maxLength: 500
+                  example: https://example.com/video.mp4
+                description:
+                  type: string
+                  nullable: true
+                  example: Updated post description!
+                is_pg:
+                  type: boolean
+                  example: false
+                is_disturbing:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Post updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Post updated successfully
+                  post:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      user_id:
+                        type: integer
+                        example: 5
+                      media_type:
+                        type: string
+                        example: video
+                      resource_type:
+                        type: string
+                        example: url
+                      resource_url_path:
+                        type: string
+                        example: https://example.com/video.mp4
+                      description:
+                        type: string
+                        nullable: true
+                        example: Updated post description!
+                      is_pg:
+                        type: boolean
+                        example: false
+                      is_disturbing:
+                        type: boolean
+                        example: true
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-15T10:30:00Z
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-15T11:00:00Z
+                      superstar:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 5
+                          display_name:
+                            type: string
+                            example: John Doe
+                          username:
+                            type: string
+                            example: johndoe
+                          email:
+                            type: string
+                            format: email
+                            example: superstar@example.com
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Post not found
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+                  errors:
+                    type: object
+                    example:
+                      media_type:
+                        - The media type must be image or video.
+
+    delete:
+      tags:
+        - Superstar Posts
+      summary: Delete superstar post
+      description: Delete a specific post for the authenticated superstar
+      security:
+        - sanctum: []
+      parameters:
+        - name: id
+          in: path
+          description: Post ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Post deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Post deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Post not found
+
+# User Payment History
+  /api/user/payment-history/user:
+    get:
+      tags:
+        - User Payment History
+      summary: Get all user payments
+      description: Fetch all user payments with pagination
+      security:
+        - sanctum: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          description: Items per page
+          required: false
+          schema:
+            type: integer
+            default: 15
+      responses:
+        '200':
+          description: Payments retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        user:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: John Doe
+                            email:
+                              type: string
+                              format: email
+                              example: user@example.com
+                        superstar:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: Jane Smith
+                            username:
+                              type: string
+                              example: janesmith
+                        total_amount:
+                          type: number
+                          format: float
+                          example: 50.00
+                        payment_method:
+                          type: string
+                          example: card
+                        payment_status:
+                          type: string
+                          example: paid
+                        transaction_reference:
+                          type: string
+                          example: PAY_123456_1640995200
+                        paid_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:30:00Z
+                        chat_session:
+                          type: object
+                          properties:
+                            total_minutes:
+                              type: integer
+                              example: 30
+                            price_per_minute:
+                              type: number
+                              format: float
+                              example: 1.50
+                            total_amount:
+                              type: number
+                              format: float
+                              example: 45.00
+                            status:
+                              type: string
+                              example: completed
+                            started_at:
+                              type: string
+                              format: date-time
+                              example: 2024-01-15T10:00:00Z
+                            ended_at:
+                              type: string
+                              format: date-time
+                              example: 2024-01-15T10:30:00Z
+                        breakdown:
+                          type: object
+                          properties:
+                            superstar_amount:
+                              type: number
+                              format: float
+                              example: 40.00
+                            system_amount:
+                              type: number
+                              format: float
+                              example: 10.00
+                            superstar_percentage:
+                              type: number
+                              format: float
+                              example: 80.00
+                            system_percentage:
+                              type: number
+                              format: float
+                              example: 20.00
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:30:00Z
+                        updated_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:35:00Z
+                  pagination:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 5
+                      per_page:
+                        type: integer
+                        example: 15
+                      total:
+                        type: integer
+                        example: 75
+                      from:
+                        type: integer
+                        example: 1
+                      to:
+                        type: integer
+                        example: 15
+                      has_more_pages:
+                        type: boolean
+                        example: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+
+  /api/user/payment-history/superstar/{superstarId}:
+    get:
+      tags:
+        - User Payment History
+      summary: Get payments by superstar
+      description: Fetch payments filtered by specific superstar with pagination
+      security:
+        - sanctum: []
+      parameters:
+        - name: superstarId
+          in: path
+          description: Superstar ID
+          required: true
+          schema:
+            type: integer
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          description: Items per page
+          required: false
+          schema:
+            type: integer
+            default: 15
+      responses:
+        '200':
+          description: Payments retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  superstar:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 5
+                      name:
+                        type: string
+                        example: Jane Smith
+                      username:
+                        type: string
+                        example: janesmith
+                      rating:
+                        type: number
+                        format: float
+                        example: 4.5
+                      total_followers:
+                        type: integer
+                        example: 1500
+                  payments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        user:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: John Doe
+                            email:
+                              type: string
+                              format: email
+                              example: user@example.com
+                        superstar:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: Jane Smith
+                            username:
+                              type: string
+                              example: janesmith
+                            rating:
+                              type: number
+                              format: float
+                              example: 4.5
+                            total_followers:
+                              type: integer
+                              example: 1500
+                            price_per_hour:
+                              type: number
+                              format: float
+                              example: 50.00
+                        total_amount:
+                          type: number
+                          format: float
+                          example: 50.00
+                        payment_method:
+                          type: string
+                          example: card
+                        payment_status:
+                          type: string
+                          example: paid
+                        transaction_reference:
+                          type: string
+                          example: PAY_123456_1640995200
+                        paid_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:30:00Z
+                        chat_session:
+                          type: object
+                          properties:
+                            total_minutes:
+                              type: integer
+                              example: 30
+                            price_per_minute:
+                              type: number
+                              format: float
+                              example: 1.50
+                            total_amount:
+                              type: number
+                              format: float
+                              example: 45.00
+                            status:
+                              type: string
+                              example: completed
+                            started_at:
+                              type: string
+                              format: date-time
+                              example: 2024-01-15T10:00:00Z
+                            ended_at:
+                              type: string
+                              format: date-time
+                              example: 2024-01-15T10:30:00Z
+                        breakdown:
+                          type: object
+                          properties:
+                            superstar_amount:
+                              type: number
+                              format: float
+                              example: 40.00
+                            system_amount:
+                              type: number
+                              format: float
+                              example: 10.00
+                            superstar_percentage:
+                              type: number
+                              format: float
+                              example: 80.00
+                            system_percentage:
+                              type: number
+                              format: float
+                              example: 20.00
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:30:00Z
+                        updated_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:35:00Z
+                  pagination:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 3
+                      per_page:
+                        type: integer
+                        example: 15
+                      total:
+                        type: integer
+                        example: 42
+                      from:
+                        type: integer
+                        example: 1
+                      to:
+                        type: integer
+                        example: 15
+                      has_more_pages:
+                        type: boolean
+                        example: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+
+  /api/user/payment-history/transaction/{transactionReference}:
+    get:
+      tags:
+        - User Payment History
+      summary: Get transaction details
+      description: View complete transaction details by reference
+      security:
+        - sanctum: []
+      parameters:
+        - name: transactionReference
+          in: path
+          description: Transaction reference
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Transaction details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transaction:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: John Doe
+                          email:
+                            type: string
+                            format: email
+                            example: user@example.com
+                      superstar:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: Jane Smith
+                          username:
+                            type: string
+                            example: janesmith
+                          rating:
+                            type: number
+                            format: float
+                            example: 4.5
+                          total_followers:
+                            type: integer
+                            example: 1500
+                          price_per_hour:
+                            type: number
+                            format: float
+                            example: 50.00
+                      total_amount:
+                        type: number
+                        format: float
+                        example: 50.00
+                      payment_method:
+                        type: string
+                        example: card
+                      payment_status:
+                        type: string
+                        example: paid
+                      transaction_reference:
+                        type: string
+                        example: PAY_123456_1640995200
+                      paid_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-15T10:30:00Z
+                      chat_session:
+                        type: object
+                        properties:
+                          total_minutes:
+                            type: integer
+                            example: 30
+                          price_per_minute:
+                            type: number
+                            format: float
+                            example: 1.50
+                          total_amount:
+                            type: number
+                            format: float
+                            example: 45.00
+                          status:
+                            type: string
+                            example: completed
+                          started_at:
+                            type: string
+                            format: date-time
+                            example: 2024-01-15T10:00:00Z
+                          ended_at:
+                            type: string
+                            format: date-time
+                            example: 2024-01-15T10:30:00Z
+                        breakdown:
+                          type: object
+                          properties:
+                            superstar_amount:
+                              type: number
+                              format: float
+                              example: 40.00
+                            system_amount:
+                              type: number
+                              format: float
+                              example: 10.00
+                            superstar_percentage:
+                              type: number
+                              format: float
+                              example: 80.00
+                            system_percentage:
+                              type: number
+                              format: float
+                              example: 20.00
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:30:00Z
+                        updated_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:35:00Z
+        '404':
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Transaction not found
+
+# User Payments
+  /api/user/payments/process:
+    post:
+      tags:
+        - User Payments
+      summary: Process payment
+      description: Process payment for chat session and create payment records
+      security:
+        - sanctum: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - conversation_id
+                - payment_method
+                - amount
+              properties:
+                conversation_id:
+                  type: integer
+                  example: 1
+                payment_method:
+                  type: string
+                  enum: ["wallet", "card", "mobile_money"]
+                  example: card
+                amount:
+                  type: number
+                  format: float
+                  example: 50.00
+      responses:
+        '200':
+          description: Payment processed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Payment processed successfully
+                  payment:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      transaction_reference:
+                        type: string
+                        example: PAY_123456_1640995200
+                      total_amount:
+                        type: number
+                        format: float
+                        example: 50.00
+                      payment_method:
+                        type: string
+                        example: card
+                      payment_status:
+                        type: string
+                        example: paid
+                      paid_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-15T10:30:00Z
+                      chat_session:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          total_minutes:
+                            type: integer
+                            example: 30
+                          price_per_minute:
+                            type: number
+                            format: float
+                            example: 1.50
+                          total_amount:
+                            type: number
+                            format: float
+                            example: 45.00
+                          status:
+                            type: string
+                            example: completed
+                          started_at:
+                            type: string
+                            format: date-time
+                            example: 2024-01-15T10:00:00Z
+                          ended_at:
+                            type: string
+                            format: date-time
+                            example: 2024-01-15T10:30:00Z
+                      breakdown:
+                        type: object
+                        properties:
+                          superstar_amount:
+                            type: number
+                            format: float
+                            example: 40.00
+                          system_amount:
+                            type: number
+                            format: float
+                            example: 10.00
+                          superstar_percentage:
+                            type: number
+                            format: float
+                            example: 80.00
+                          system_percentage:
+                            type: number
+                            format: float
+                            example: 20.00
+        '403':
+          description: Unauthorized access to conversation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized access to conversation
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+                  errors:
+                    type: object
+                    example:
+                      conversation_id:
+                        - The conversation id field is required.
+
+  /api/user/payments/history:
+    get:
+      tags:
+        - User Payments
+      summary: Get payment history
+      description: Get user's payment history with pagination
+      security:
+        - sanctum: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          description: Items per page
+          required: false
+          schema:
+            type: integer
+            default: 15
+      responses:
+        '200':
+          description: Payment history retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        total_amount:
+                          type: number
+                          format: float
+                          example: 50.00
+                        payment_method:
+                          type: string
+                          example: card
+                        payment_status:
+                          type: string
+                          example: paid
+                        transaction_reference:
+                          type: string
+                          example: PAY_123456_1640995200
+                        paid_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:30:00Z
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:30:00Z
+                        updated_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:35:00Z
+                  pagination:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 5
+                      per_page:
+                        type: integer
+                        example: 15
+                      total:
+                        type: integer
+                        example: 75
+                      from:
+                        type: integer
+                        example: 1
+                      to:
+                        type: integer
+                        example: 15
+                      has_more_pages:
+                        type: boolean
+                        example: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+
+# User Chat
+  /api/user/chat/start/{superstarId}:
+    post:
+      tags:
+        - User Chat
+      summary: Start chat with superstar
+      description: Find or create conversation with a superstar
+      security:
+        - sanctum: []
+      parameters:
+        - name: superstarId
+          in: path
+          description: Superstar ID to start chat with
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Chat started successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Chat started successfully
+                  conversation:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      user_google_id:
+                        type: integer
+                        example: 5
+                      superstar_id:
+                        type: integer
+                        example: 2
+                      status:
+                        type: string
+                        example: active
+                      started_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-15T10:00:00Z
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: 2024-01-15T10:00:00Z
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+        '404':
+          description: Superstar not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Superstar not found
+
+  /api/user/chat/conversations:
+    get:
+      tags:
+        - User Chat
+      summary: Get user conversations
+      description: Get all conversations for authenticated user
+      security:
+        - sanctum: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          description: Items per page
+          required: false
+          schema:
+            type: integer
+            default: 15
+      responses:
+        '200':
+          description: Conversations retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        user_google_id:
+                          type: integer
+                          example: 5
+                        superstar_id:
+                          type: integer
+                          example: 2
+                        status:
+                          type: string
+                          example: active
+                        started_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:00:00Z
+                        updated_at:
+                          type: string
+                          format: date-time
+                          example: 2024-01-15T10:00:00Z
+                        superstar:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 2
+                            display_name:
+                              type: string
+                              example: Jane Smith
+                            username:
+                              type: string
+                              example: janesmith
+                            rating:
+                              type: number
+                              format: float
+                              example: 4.5
+                            total_followers:
+                              type: integer
+                              example: 1500
+                        messages:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            conversation_id:
+                              type: integer
+                              example: 1
+                            sender_type:
+                              type: string
+                              example: user
+                            message_type:
+                              type: string
+                              example: text
+                            message:
+                              type: string
+                              example: Hello!
+                            is_read:
+                              type: boolean
+                              example: false
+                            created_at:
+                              type: string
+                              format: date-time
+                              example: 2024-01-15T10:30:00Z
+                  pagination:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 5
+                      per_page:
+                        type: integer
+                        example: 15
+                      total:
+                        type: integer
+                        example: 75
+                      from:
+                        type: integer
+                        example: 1
+                      to:
+                        type: integer
+                        example: 15
+                      has_more_pages:
+                        type: boolean
+                        example: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+
+  /api/user/chat/unread-count:
+    get:
+      tags:
+        - User Chat
+      summary: Get unread message count
+      description: Get count of unread messages for authenticated user
+      security:
+        - sanctum: []
+      responses:
+        '200':
+          description: Unread count retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  unread_count:
+                    type: integer
+                    example: 5
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+
+# User Superstars
+  /api/user/superstars:
+    get:
+      tags:
+        - User Superstars
+      summary: Get all superstars
+      description: Fetch all superstars with pagination
+      parameters:
+        - name: per_page
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 15
+      responses:
+        '200':
+          description: Superstars retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_id:
+                              type: integer
+                              example: 5
+                            display_name:
+                              type: string
+                              example: John Doe
+                            bio:
+                              type: string
+                              example: Professional superstar
+                            price_per_hour:
+                              type: number
+                              format: float
+                              example: 50.00
+                            is_available:
+                              type: boolean
+                              example: true
+                            rating:
+                              type: number
+                              format: float
+                              example: 4.5
+                            total_followers:
+                              type: integer
+                              example: 1500
+                            status:
+                              type: string
+                              example: active
+                      current_page:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 5
+                      per_page:
+                        type: integer
+                        example: 15
+                      total:
+                        type: integer
+                        example: 75
+                      from:
+                        type: integer
+                        example: 1
+                      to:
+                        type: integer
+                        example: 15
+                      has_more_pages:
+                        type: boolean
+                        example: true
+
+  /api/user/superstars/{id}:
+    get:
+      tags:
+        - User Superstars
+      summary: Get superstar details
+      description: Fetch superstar details and whether authenticated user is subscribed
+      security:
+        - sanctum: []
+      parameters:
+        - name: id
+          in: path
+          description: Superstar ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Superstar details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      superstar:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          user_id:
+                            type: integer
+                            example: 5
+                          display_name:
+                            type: string
+                            example: John Doe
+                          bio:
+                            type: string
+                            example: Professional superstar
+                          price_per_hour:
+                            type: number
+                            format: float
+                            example: 50.00
+                          is_available:
+                            type: boolean
+                            example: true
+                          rating:
+                            type: number
+                            format: float
+                            example: 4.5
+                          total_followers:
+                            type: integer
+                            example: 1500
+                          status:
+                            type: string
+                            example: active
+                      is_subscribed:
+                        type: boolean
+                        example: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unauthorized
+        '404':
+          description: Superstar not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Superstar not found
+
+  /api/user/superstars/{id}/posts:
+    get:
+      tags:
+        - User Superstars
+      summary: Get superstar posts
+      description: Fetch superstar posts (paginated), newest first
+      parameters:
+        - name: id
+          in: path
+          description: Superstar ID
+          required: true
+          schema:
+            type: integer
+        - name: per_page
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 15
+      responses:
+        '200':
+          description: Superstar posts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_id:
+                              type: integer
+                              example: 5
+                            media_type:
+                              type: string
+                              example: image
+                            resource_type:
+                              type: string
+                              example: upload
+                            resource_url_path:
+                              type: string
+                              example: posts/image123.jpg
+                            description:
+                              type: string
+                              nullable: true
+                              example: Check out my new post!
+                            is_pg:
+                              type: boolean
+                              example: true
+                            is_disturbing:
+                              type: boolean
+                              example: false
+                            created_at:
+                              type: string
+                              format: date-time
+                              example: 2024-01-15T10:30:00Z
+                      current_page:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 5
+                      per_page:
+                        type: integer
+                        example: 15
+                      total:
+                        type: integer
+                        example: 75
+                      from:
+                        type: integer
+                        example: 1
+                      to:
+                        type: integer
+                        example: 15
+                      has_more_pages:
+                        type: boolean
+                        example: true
+        '404':
+          description: Superstar not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Superstar not found
+
 components:
   securitySchemes:
     sanctum:

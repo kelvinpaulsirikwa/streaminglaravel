@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Superstar;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Arr;
 
 class TanzanianSuperstarSeeder extends Seeder
 {
@@ -28,7 +29,7 @@ class TanzanianSuperstarSeeder extends Seeder
                 'is_blocked' => false,
                 'profile_image' => null,
                 'bio' => 'Tanzanian Bongo Flava artist and music producer',
-                'country' => 'Tanzania',
+                
             ],
             [
                 'name' => 'Alikiba',
@@ -40,7 +41,7 @@ class TanzanianSuperstarSeeder extends Seeder
                 'is_blocked' => false,
                 'profile_image' => null,
                 'bio' => 'Tanzanian singer and songwriter',
-                'country' => 'Tanzania',
+                
             ],
             [
                 'name' => 'Nandy',
@@ -52,7 +53,7 @@ class TanzanianSuperstarSeeder extends Seeder
                 'is_blocked' => false,
                 'profile_image' => null,
                 'bio' => 'Tanzanian singer known for Bongo Flava music',
-                'country' => 'Tanzania',
+            
             ],
             [
                 'name' => 'Ray C',
@@ -64,7 +65,7 @@ class TanzanianSuperstarSeeder extends Seeder
                 'is_blocked' => false,
                 'profile_image' => null,
                 'bio' => 'Tanzanian singer and performer',
-                'country' => 'Tanzania',
+                
             ],
             [
                 'name' => 'Juma Jux',
@@ -76,7 +77,7 @@ class TanzanianSuperstarSeeder extends Seeder
                 'is_blocked' => false,
                 'profile_image' => null,
                 'bio' => 'Tanzanian Bongo Flava artist',
-                'country' => 'Tanzania',
+                
             ],
             [
                 'name' => 'Harmonize',
@@ -88,23 +89,22 @@ class TanzanianSuperstarSeeder extends Seeder
                 'is_blocked' => false,
                 'profile_image' => null,
                 'bio' => 'Tanzanian Bongo Flava music group',
-                'country' => 'Tanzania',
+                
             ],
         ];
 
         foreach ($tanzanianUsers as $user) {
             $createdUser = User::firstOrCreate(
                 ['email' => $user['email']],
-                $user
+                Arr::except($user, ['bio'])
             );
 
-            // Then create the superstar profile
+            // Then create the superstar profile (keep bio on the superstar)
             Superstar::firstOrCreate(
                 ['user_id' => $createdUser->id],
                 [
                     'display_name' => $user['name'],
                     'bio' => $user['bio'],
-                    'country' => $user['country'],
                     'is_available' => true,
                     'rating' => 4.5,
                     'total_followers' => rand(10000, 500000),

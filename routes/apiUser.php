@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserApi\UserApiLogin;
 use App\Http\Controllers\UserApi\SubscriptionController;
+use App\Http\Controllers\UserApi\UserSuperStarController;
 use App\Http\Controllers\UserApi\ChatController;
 use App\Http\Controllers\UserApi\PaymentController;
 use App\Http\Controllers\UserApi\PaymentHistoryController;
@@ -24,7 +25,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('api.user.subscriptions.index');
     Route::post('/subscriptions', [SubscriptionController::class, 'store'])->name('api.user.subscriptions.store');
     Route::delete('/subscriptions/{superstarId}', [SubscriptionController::class, 'destroy'])->name('api.user.subscriptions.destroy');
-    Route::get('/superstars/{id}', [SubscriptionController::class, 'show'])->name('api.user.superstars.show');
+    // Superstars: list, details, and posts for authenticated users
+    Route::get('/superstars', [UserSuperStarController::class, 'index'])->name('api.user.superstars.index');
+    Route::get('/superstars/{id}', [UserSuperStarController::class, 'show'])->name('api.user.superstars.show');
+    Route::get('/superstars/{id}/posts', [UserSuperStarController::class, 'posts'])->name('api.user.superstars.posts');
     
     // Chat routes
     Route::prefix('chat')->group(function () {
@@ -49,4 +53,4 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/superstar/{superstarId}', [PaymentHistoryController::class, 'getPaymentsBySuperstar']);
         Route::get('/transaction/{transactionReference}', [PaymentHistoryController::class, 'getTransactionDetails']);
     });
-});
+}); 
