@@ -36,9 +36,11 @@
 
         <!-- Right Panel - Login Form -->
         <div class="login-form-panel">
+            
             <div class="login-content">
                 <!-- Logo -->
                 <div class="logo-container">
+                    
                     <div class="logo-icon">
                         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M16 4L20 12L28 14L20 16L16 24L12 16L4 14L12 12L16 4Z" fill="currentColor"/>
@@ -115,7 +117,8 @@
                             <input type="checkbox" name="remember" id="remember">
                             <span>Remember me</span>
                         </label>
-                        <a href="#" class="forgot-password-link">Forgot Password</a>
+                        <a href="/">Back to Home Page</a>
+                        
                     </div>
 
                     <!-- Sign In Button -->

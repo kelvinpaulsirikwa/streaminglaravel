@@ -45,15 +45,16 @@
                     <a href="#superstars" class="nav-link-custom">Superstars</a>
                     <a href="#stats" class="nav-link-custom">Stats</a>
                     <a href="#cta" class="nav-link-custom">Get Started</a>
+                    <a href="{{ route('admin.login') }}" class="nav-link-custom">Login</a>
                 </div>
                 <div>
-                    @if (Route::has('login'))
+                    @if (Route::has('admin.login'))
                         @auth
                             <a href="{{ url('/admin/dashboard') }}" class="btn btn-primary btn-sm rounded-pill">
                                 <i class="bi bi-speedometer2 me-2"></i>Dashboard
                             </a>
                         @else
-                            <a href="{{ route('login') }}" class="btn btn-outline-primary btn-sm rounded-pill">
+                            <a href="{{ route('admin.login') }}" class="btn btn-outline-primary btn-sm rounded-pill">
                                 <i class="bi bi-box-arrow-in-right me-2"></i>Login
                             </a>
                         @endauth
